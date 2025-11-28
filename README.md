@@ -1,79 +1,128 @@
-# 🌐 Social Media API
+# Social Media API
 
-Uma API de rede social simples feita em **TypeScript** e **Express.js**. Permite usuários criar contas, postar mensagens, comentar e dar likes!
+REST API de rede social em TypeScript com Express.js, autenticação JWT e PostgreSQL.
 
----
+## Funcionalidades
 
-## 🎯 O Que É?
+- ✅ Autenticação com JWT
+- ✅ CRUD completo de Posts
+- ✅ Sistema de Comentários
+- ✅ Sistema de Likes
+- ✅ Validação com Zod
+- ✅ Testes com Jest
+- ✅ TypeScript com tipos rigorosos
 
-Imagine um mini **Twitter/X**. Você pode:
-- ✅ Criar sua conta (com email e senha)
-- ✅ Escrever posts
-- ✅ Comentar em posts de outros
-- ✅ Dar likes
-- ✅ Tudo protegido com autenticação
+## Tecnologias
 
----
+- **Runtime**: Node.js 18+
+- **Linguagem**: TypeScript
+- **Framework**: Express.js
+- **Banco de Dados**: PostgreSQL (pronto para integração)
+- **Autenticação**: JWT
+- **Validação**: Zod
+- **Testes**: Jest
+- **Hashing**: bcryptjs
 
-## 🚀 Como Começar
+## Instalação
 
-### 1. Instale Node.js
-Baixe em: https://nodejs.org/
+### Pré-requisitos
 
-### 2. Clone e Instale
+- Node.js 18+
+- npm ou yarn
+
+### Setup
+
+1. Clone o repositório:
 ```bash
-git clone https://github.com/remiltonjr/Social-Media-API.git
-cd Social-Media-API
+git clone https://github.com/seu-usuario/social-media-api.git
+cd social-media-api
+```
+
+2. Instale as dependências:
+```bash
 npm install
 ```
 
-### 3. Inicie o Servidor
+3. Configure as variáveis de ambiente:
+```bash
+cp .env.example .env
+```
+
+4. Inicie o servidor:
 ```bash
 npm run dev
 ```
 
-Pronto! A API está rodando em **http://localhost:3000**
+A API estará disponível em `http://localhost:3000`
 
----
+## Scripts Disponíveis
 
-## 📝 Exemplo: Usar a API
+- `npm run dev` - Inicia servidor em modo desenvolvimento
+- `npm run build` - Compila TypeScript para JavaScript
+- `npm start` - Inicia servidor em produção
+- `npm test` - Executa testes
+- `npm run test:watch` - Executa testes em modo watch
+- `npm run lint` - Verifica qualidade do código
 
-### Passo 1: Criar uma Conta
+## Endpoints da API
+
+### Autenticação
+- `POST /auth/register` - Registrar novo usuário
+- `POST /auth/login` - Fazer login
+
+### Posts
+- `GET /posts` - Listar todos os posts
+- `POST /posts` - Criar novo post (autenticado)
+- `GET /posts/:id` - Obter detalhes de um post
+- `PUT /posts/:id` - Atualizar post (autenticado)
+- `DELETE /posts/:id` - Deletar post (autenticado)
+- `POST /posts/:id/like` - Dar like em post (autenticado)
+- `DELETE /posts/:id/unlike` - Remover like (autenticado)
+
+### Comentários
+- `POST /posts/:postId/comments` - Adicionar comentário (autenticado)
+- `GET /posts/:postId/comments` - Listar comentários
+- `DELETE /posts/comments/:id` - Deletar comentário (autenticado)
+
+## Estrutura do Projeto
+
+```
+src/
+├── controllers/      # Controladores (lógica de requisições)
+├── routes/          # Definição de rotas
+├── middlewares/     # Middlewares (autenticação, validação)
+├── services/        # Serviços (lógica de negócio)
+├── models/          # Tipos e interfaces TypeScript
+├── schemas/         # Schemas de validação (Zod)
+├── database/        # Configuração de banco de dados
+└── index.ts         # Entry point
+tests/               # Suite de testes
+```
+
+## Exemplo de Uso
+
+### Registrar Usuário
 ```bash
 curl -X POST http://localhost:3000/auth/register \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "joao@example.com",
+    "email": "usuario@example.com",
     "password": "senha123",
-    "name": "João"
+    "name": "Seu Nome"
   }'
 ```
 
-**Resposta:**
-```json
-{
-  "token": "eyJhbGc...",
-  "user": {
-    "id": "1234",
-    "email": "joao@example.com",
-    "name": "João"
-  }
-}
-```
-
-💾 **Guarde o `token`! Você vai precisar dele.**
-
-### Passo 2: Fazer Login
+### Fazer Login
 ```bash
 curl -X POST http://localhost:3000/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "joao@example.com",
+    "email": "usuario@example.com",
     "password": "senha123"
   }'
 ```
 
-### Passo 3: Criar um Post
+### Criar Post (com token)
 ```bash
 curl -X POST http://localhost:3000/posts \
   -H "Content-Type: application/json" \
@@ -83,153 +132,38 @@ curl -X POST http://localhost:3000/posts \
   }'
 ```
 
-### Passo 4: Listar Posts
-```bash
-curl http://localhost:3000/posts
-```
+## Desenvolvimento Futuro
 
-### Passo 5: Comentar em um Post
-```bash
-curl -X POST http://localhost:3000/posts/NUMERO_DO_POST/comments \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
-  -d '{
-    "content": "Que legal!"
-  }'
-```
+- [ ] Integração com PostgreSQL real
+- [ ] Sistema de followers/amigos
+- [ ] Feed personalizado
+- [ ] Notificações em tempo real (WebSocket)
+- [ ] Upload de imagens
+- [ ] Rate limiting
+- [ ] Caching com Redis
+- [ ] Documentação Swagger/OpenAPI
 
-### Passo 6: Dar Like
-```bash
-curl -X POST http://localhost:3000/posts/NUMERO_DO_POST/like \
-  -H "Authorization: Bearer SEU_TOKEN_AQUI"
-```
+## Testes
 
----
-
-## 🔐 Como Funciona a Segurança?
-
-**Token JWT** = Um "cartão de identidade digital"
-
-1. Você faz login → Recebe um token
-2. Envia o token em cada requisição → Servidor confia que é você
-3. Sem token → Não consegue fazer certas ações
-
-É como um passaporte da internet! 🛂
-
----
-
-## 📚 Todos os Endpoints
-
-### 🔑 Autenticação
-| Método | Endpoint | O Que Faz |
-|--------|----------|----------|
-| POST | `/auth/register` | Criar nova conta |
-| POST | `/auth/login` | Fazer login |
-
-### 📄 Posts
-| Método | Endpoint | O Que Faz |
-|--------|----------|----------|
-| GET | `/posts` | Ver todos os posts |
-| POST | `/posts` | Criar novo post ⭐ |
-| GET | `/posts/:id` | Ver um post específico |
-| PUT | `/posts/:id` | Editar seu post ⭐ |
-| DELETE | `/posts/:id` | Deletar seu post ⭐ |
-| POST | `/posts/:id/like` | Dar like ⭐ |
-| DELETE | `/posts/:id/unlike` | Remover like ⭐ |
-
-### 💬 Comentários
-| Método | Endpoint | O Que Faz |
-|--------|----------|----------|
-| POST | `/posts/:postId/comments` | Comentar em um post ⭐ |
-| GET | `/posts/:postId/comments` | Ver comentários |
-| DELETE | `/posts/comments/:id` | Deletar seu comentário ⭐ |
-
-⭐ = Precisa estar autenticado (enviar token)
-
----
-
-## 🏗️ Estrutura do Código
-
-```
-src/
-├── controllers/          # Recebem requisições
-├── services/             # Fazem o trabalho
-├── routes/               # Definem URLs
-├── middlewares/          # Verificam autenticação
-├── models/               # Tipos de dados
-├── schemas/              # Validam entrada
-└── index.ts              # Servidor principal
-```
-
-**Analogy:** Como um restaurante 🍽️
-- **Routes** = Entrada do restaurante
-- **Controllers** = Garçom que pega o pedido
-- **Services** = Cozinheiro que prepara
-- **Middlewares** = Segurança na porta
-- **Models** = Tipos de pratos no menu
-
----
-
-## 🧪 Testar Tudo
-
+Execute a suite de testes:
 ```bash
 npm test
 ```
 
-Isso roda testes automatizados para garantir que tudo funciona.
-
----
-
-## 📝 Scripts Úteis
-
+Com modo watch:
 ```bash
-npm run dev          # Rodando em desenvolvimento
-npm run build        # Compilar código
-npm start            # Rodar em produção
-npm test             # Executar testes
-npm run lint         # Verificar qualidade
+npm run test:watch
 ```
 
----
+## Licença
 
-## 🎓 O Que Aprendi Aqui?
+MIT
 
-- ✅ Como fazer uma API REST
-- ✅ Autenticação com tokens JWT
-- ✅ Validação de dados
-- ✅ TypeScript (programação com tipos)
-- ✅ Organização de código profissional
-- ✅ Como usar Git/GitHub
+## Autor
 
----
+Desenvolvido com ❤️
 
-## 🚀 Próximas Melhorias
+## Contribuições
 
-- [ ] Conectar a um banco de dados real
-- [ ] Seguir/unfollow usuários
-- [ ] Feed personalizado
-- [ ] Buscar posts
-- [ ] Imagens nos posts
-- [ ] Notificações
-- [ ] App mobile
-
----
-
-## ❓ Dúvidas?
-
-Leia o arquivo `src/index.ts` para entender como o servidor inicia.
-
-Veja `src/services/` para a lógica das funcionalidades.
-
-Acesse `src/routes/` para ver como as URLs funcionam.
-
----
-
-## 📄 Licença
-
-MIT - Use livremente!
-
----
-
-**Desenvolvido com ❤️ por Remilton Jr**
+Contribuições são bem-vindas! Abra uma issue ou pull request.
 
